@@ -1,0 +1,2 @@
+# Lindungi berkas log dari akses web langsung.
+Require all denied

@@ -1,0 +1,108 @@
+# =====================================================================
+# Lentera Digital Library - Root .htaccess
+# DocumentRoot = root proyek (C:/laragon/www/digital-library)
+#
+# 1. Memetakan URL bersih (tanpa /public) ke berkas fisik di public/.
+# 2. Menolak akses HTTP ke folder & berkas internal.
+# 3. Menonaktifkan directory listing.
+#
+# Struktur publik:
+#   /                 -> public/index.php
+#   /katalog.php      -> public/katalog.php
+#   /detail.php       -> public/detail.php
+#   /login.php        -> public/login.php
+#   /logout.php       -> public/logout.php
+#   /admin/...        -> public/admin/...
+#   /petugas/...      -> public/petugas/...
+#   /user/...         -> public/user/...
+#   /assets/...       -> public/assets/...
+#   /uploads/...      -> public/uploads/...
+# =====================================================================
+
+Options -Indexes -MultiViews
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # -----------------------------------------------------------------
+    # 0. KANONIKALISASI: /public/... adalah jalur internal, bukan URL publik.
+    #    Arahkan (301) ke URL bersih tanpa /public.
+    #
+    #    Menggunakan THE_REQUEST (baris permintaan HTTP asli) sehingga
+    #    aturan ini HANYA berlaku untuk permintaan dari klien, bukan untuk
+    #    hasil rewrite internal — mencegah loop redirect.
+    # -----------------------------------------------------------------
+    RewriteCond %{THE_REQUEST} \s/+public(/[^\s?]*)
+    RewriteRule ^public(/.*)?$ %1 [R=301,L]
+
+    # -----------------------------------------------------------------
+    # 1. KEAMANAN: tolak akses ke berkas & folder internal.
+    #    Dijalankan SEBELUM rewrite agar tidak pernah diteruskan ke public/.
+    # -----------------------------------------------------------------
+
+    # Folder internal.
+    RewriteRule ^(?:app|config|database|scripts|reports|storage-logs)(?:/|$) - [F,L]
+
+    # Semua berkas/folder tersembunyi (titik di awal). Kecuali /.well-known.
+    RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+    # Ekstensi sensitif: SQL, log, backup, arsip, konfigurasi, dokumentasi.
+    RewriteRule \.(?:sql|log|bak|backup|old|orig|save|swp|swo|tar|tgz|gz|zip|rar|7z|ini|conf|yml|yaml|lock|dist|md|markdown)$ - [F,L]
+
+    # Skrip utilitas/test di root.
+    RewriteRule ^(?:setup|test_.*|install)\.php$ - [F,L]
+
+    # -----------------------------------------------------------------
+    # 2. Aset statis: assets/ & uploads/ berada di dalam public/.
+    # -----------------------------------------------------------------
+    RewriteRule ^(assets|uploads)/(.*)$ public/$1/$2 [L]
+
+    # -----------------------------------------------------------------
+    # 3. Entry point publik lain yang berada di public/.
+    # -----------------------------------------------------------------
+    RewriteRule ^favicon\.ico$ public/assets/images/favicon.svg [L]
+    RewriteRule ^(katalog|detail|login|logout|index)\.php$ public/$1.php [L]
+
+    # Subfolder peran: admin/, petugas/, user/.
+    RewriteRule ^(admin|petugas|user)/(.+\.php)$ public/$1/$2 [L]
+
+    # -----------------------------------------------------------------
+    # 4. Akar situs -> public/index.php.
+    # -----------------------------------------------------------------
+    RewriteRule ^$ public/index.php [L]
+
+    # -----------------------------------------------------------------
+    # 5. Berkas statis publik lain di dalam public/ (favicon, dsb.).
+    # -----------------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^([^/]+\.(?:svg|png|jpg|jpeg|webp|ico|css|js|woff2?|ttf|eot|map))$ public/$1 [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Lapisan kedua: blokir berkas konfigurasi & dokumentasi internal.
+# Pola ditulis sederhana agar tidak menolak berkas aplikasi normal.
+# ---------------------------------------------------------------------
+<FilesMatch "^\.(env|htaccess|htpasswd|git.*|user\.ini)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(sql|log|bak|backup|old|orig|save|swp|swo|ini|conf|yml|yaml|dist|md|markdown)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(README|PRD|design|TEST_REPORT)(\..*)?$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json)$">
+    Require all denied
+</FilesMatch>
+
+# Header keamanan dasar.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

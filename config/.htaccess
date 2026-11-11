@@ -1,0 +1,2 @@
+# Lindungi folder konfigurasi dari akses web langsung.
+Require all denied

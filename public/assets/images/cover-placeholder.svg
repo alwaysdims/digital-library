@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" role="img" aria-label="Cover buku belum tersedia">
+  <rect width="300" height="400" fill="#EFE7DC"/>
+  <rect x="24" y="24" width="252" height="352" rx="18" fill="#FBF6EF" stroke="#E0D4C6" stroke-width="2"/>
+  <rect x="52" y="120" width="196" height="20" rx="10" fill="#D7BFAE"/>
+  <rect x="72" y="160" width="156" height="16" rx="8" fill="#E6DACB"/>
+  <rect x="72" y="190" width="120" height="16" rx="8" fill="#E6DACB"/>
+  <g transform="translate(150 250)">
+    <rect x="-52" y="-34" width="104" height="68" rx="12" fill="#7A9E7E"/>
+    <rect x="-40" y="-22" width="80" height="10" rx="5" fill="#FFFFFF" opacity="0.85"/>
+    <rect x="-40" y="-4" width="56" height="10" rx="5" fill="#FFFFFF" opacity="0.6"/>
+    <rect x="-40" y="14" width="66" height="10" rx="5" fill="#FFFFFF" opacity="0.6"/>
+  </g>
+  <text x="150" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6D6765">Cover belum tersedia</text>
+</svg>

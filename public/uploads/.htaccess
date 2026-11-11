@@ -1,0 +1,15 @@
+# Cegah eksekusi skrip di folder upload.
+# Hanya file statis/gambar yang dilayani.
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|pht|phar|pl|py|cgi|asp|aspx|jsp|sh|exe|bat)$">
+    Require all denied
+</FilesMatch>
+
+# Pastikan tipe konten gambar aman.
+AddType image/jpeg .jpg .jpeg
+AddType image/png .png
+AddType image/webp .webp
+
+# Nonaktifkan parsing PHP pada folder ini (jika diizinkan server).
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>

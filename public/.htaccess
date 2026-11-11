@@ -1,0 +1,4 @@
+# Blokir akses langsung ke file konfigurasi bila tidak sengaja terekspos.
+<FilesMatch "^\.env|composer\.(json|lock)$">
+    Require all denied
+</FilesMatch>

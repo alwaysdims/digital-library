@@ -1,0 +1,2 @@
+# Lindungi folder database dari akses web langsung.
+Require all denied
